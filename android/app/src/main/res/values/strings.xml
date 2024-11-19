@@ -1,0 +1,5 @@
+<resources>
+	<string name="app_name">NFC HCE APP</string>
+	<string name="servicedesc">NFC HCE APP EXAMPLE</string>
+	<string name="aiddescription">NFC HCE APP</string>
+</resources>
