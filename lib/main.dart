@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nfc/dialog_extention.dart';
+import 'package:nfc/nfc_scanner_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -166,7 +167,7 @@ class _NFCScannerBottomSheet extends StatelessWidget {
       constraints: BoxConstraints(
         maxHeight: 0.5 * MediaQuery.of(context).size.height,
       ),
-      child: Text(content),
+      child: AppNFCScanner(content: content),
     );
   }
 }
