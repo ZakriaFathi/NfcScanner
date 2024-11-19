@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_nfc_hce/flutter_nfc_hce.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mobile_widgets/widgets/button/button.dart';
-import 'package:mobile_widgets/widgets/label/label.dart';
+import 'package:nfc/dialog_extention.dart';
 
 class AppNFCScanner extends StatefulWidget {
   final String content;
 
-  AppNFCScanner({super.key, required this.content});
+  const AppNFCScanner({super.key, required this.content});
 
   @override
   State<AppNFCScanner> createState() => _AppNFCScannerState();
@@ -28,10 +26,17 @@ class _AppNFCScannerState extends State<AppNFCScanner> {
     final bool isNFCEnabled = await _isNFCEnabled();
     if (isNFCEnabled) {
       _flutterNfcHcePlugin.startNfcHce(widget.content);
-      await Future.delayed(Duration(seconds: 50));
+      await Future.delayed(const Duration(seconds: 50));
     } else {
-      context.pop();
-      "يرجى تفعيل خدمة الـNFC من الهاتف";
+      if (mounted) {
+        context
+            .showMyAlertDialog(
+                title: 'NFC ISSUE',
+                description: 'Please activate the nfc from the phone')
+            .then((v) {
+          Navigator.pop(context);
+        });
+      }
     }
     return null;
   }
@@ -56,13 +61,13 @@ class _AppNFCScannerState extends State<AppNFCScanner> {
         SizedBox(height: 15.h),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w),
-          child: Text(
-            'جاهز للمسح',
+          child: const Text(
+            'Ready to be scanned',
             maxLines: 2,
             textAlign: TextAlign.center,
           ),
         ),
-        Spacer(),
+        const Spacer(),
         CircleAvatar(
           radius: 70.0,
           backgroundColor: Colors.white,
@@ -72,28 +77,27 @@ class _AppNFCScannerState extends State<AppNFCScanner> {
             color: Theme.of(context).primaryColor,
           ),
         ),
-        Spacer(),
+        const Spacer(),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w),
-          child: Text(
-            'قرب جهازك من جهاز التاجر',
+          child: const Text(
+            'Make you\'re phone closer to the device',
             maxLines: 2,
             textAlign: TextAlign.center,
           ),
         ),
-        Spacer(),
+        const Spacer(),
         Align(
           alignment: Alignment.bottomCenter,
           child: ElevatedButton(
-            child: Text('إلغاء'),
-            onPressed: () {
-              _flutterNfcHcePlugin.stopNfcHce();
-              Navigator.of(context).pop();
-            },
-            style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(Colors.white))),
-          ),
-
+              onPressed: () {
+                _flutterNfcHcePlugin.stopNfcHce();
+                Navigator.of(context).pop();
+              },
+              style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all(Colors.white)),
+              child: const Text('Cancel')),
+        ),
       ],
     );
   }
