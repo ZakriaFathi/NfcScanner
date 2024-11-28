@@ -2,4 +2,6 @@
 	<string name="app_name">NFC HCE APP</string>
 	<string name="servicedesc">NFC HCE APP EXAMPLE</string>
 	<string name="aiddescription">NFC HCE APP</string>
+	<string name="service_description">NFC HCE Service</string>
+	<string name="aid_group_description">D2760000850101</string>
 </resources>

@@ -14,6 +14,7 @@ class AppNFCScanner extends StatefulWidget {
 
 class _AppNFCScannerState extends State<AppNFCScanner> {
   //plugin instance
+  String message = '';
   final _flutterNfcHcePlugin = FlutterNfcHce();
   Future<bool> _isNFCEnabled() async {
     bool isNfcSupported = await _flutterNfcHcePlugin.isNfcHceSupported();
@@ -22,25 +23,48 @@ class _AppNFCScannerState extends State<AppNFCScanner> {
     return (isNfcSupported && isNfcEnabled && isNfcHceSupported);
   }
 
-  Future<String?> initNfcHce() async {
+  Future<void> initNfcHce() async {
     final bool isNFCEnabled = await _isNFCEnabled();
-    if (isNFCEnabled) {
-      _flutterNfcHcePlugin.startNfcHce(widget.content);
-      await Future.delayed(const Duration(seconds: 50));
-    } else {
+
+    if (!isNFCEnabled) {
       if (mounted) {
-        context
-            .showMyAlertDialog(
-                title: 'NFC ISSUE',
-                description: 'Please activate the nfc from the phone')
-            .then((v) {
-          Navigator.pop(context);
-        });
+        await context.showMyAlertDialog(
+          title: 'NFC Issue',
+          description: 'Please activate NFC from the phone settings.',
+        ).then((v) {
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        });// Optional: Navigate back after the alert
       }
     }
-    return null;
-  }
 
+    try {
+      // Stop any ongoing NFC session to avoid conflicts
+      await _flutterNfcHcePlugin.stopNfcHce();
+
+      // Start NFC HCE with the provided content
+      await _flutterNfcHcePlugin.startNfcHce(widget.content);
+      print("NFC HCE started successfully with content: ${widget.content}");
+
+      // Wait for a while to keep the session active
+      await Future.delayed(const Duration(seconds: 50));
+
+      message = "NFC HCE initialized successfully.";
+    } catch (e) {
+      // Handle errors and update UI if mounted
+      if (mounted) {
+        await context.showMyAlertDialog(
+          title: 'NFC Issue',
+          description: "Error resetting NFC HCE: $e",
+        ).then((v) {
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        });// Optional: Navigate back after the alert
+      }
+    }
+  }
   @override
   void initState() {
     initNfcHce();

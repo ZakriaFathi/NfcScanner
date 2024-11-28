@@ -10,7 +10,7 @@ extension MyDialogh on BuildContext {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(title),
-          content: Text(description),
+          content: Text(description, maxLines: 5,),
           actions: <Widget>[
             TextButton(
               child: const Text('Ok'),
